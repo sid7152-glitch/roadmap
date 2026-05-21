@@ -1,0 +1,7 @@
+{
+  "java.project.sourcePaths": [
+    ".",
+    "TaskScheduler"
+  ],
+  "java.project.referencedLibraries": []
+}
