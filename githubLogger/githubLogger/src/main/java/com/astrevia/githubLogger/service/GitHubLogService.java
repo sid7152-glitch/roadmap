@@ -1,4 +1,8 @@
-package githubLogger.githubLogger;
+package com.astrevia.githubLogger.service;
+
+import com.astrevia.githubLogger.model.CommitModel;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URI;
@@ -10,13 +14,31 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class GithubLogger {
+@Service
+public class GitHubLogService {
+    @Value("${api.url}")
+    private String baseUrl;
 
-    public static List<Commit> extractCommitRecords(String json) {
+    public List<CommitModel> getCommits(String devProfile){
+        HttpClient client = HttpClient.newHttpClient();
+        String baseURL = this.baseUrl.replace("enter_user", devProfile);
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://api.github.com/users/sid7152-glitch/events")).build();
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            // System.out.println(response.body());
+            return extractCommitRecords(response.body());
+        } catch (IOException | InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static List<CommitModel> extractCommitRecords(String json) {
 
         // Split each event object
         String[] events = json.split("\\},\\{");
-        List<Commit> commits = new ArrayList<>();
+        List<CommitModel> commits = new ArrayList<>();
         System.out.println(events.length);
         for (String event : events) {
             String id = extractValue(event, "\"id\":\"(.*?)\"");
@@ -28,15 +50,7 @@ public class GithubLogger {
 
             // Only PushEvent contains commit data
             if ("PushEvent".equals(type)) {
-                /*
-                System.out.println("================================");
-                System.out.println("Event ID    : " + id);
-                System.out.println("Repository  : " + repo);
-                System.out.println("Commit Head : " + head);
-                System.out.println("Before Hash : " + before);
-                System.out.println("Created At  : " + createdAt);
-                 */
-                Commit commit = new Commit(id, repo, head, before, createdAt);
+                CommitModel commit = new CommitModel(id, repo, head, before, createdAt);
                 commits.add(commit);
             }
         }
@@ -53,18 +67,4 @@ public class GithubLogger {
         }
         return "NOT_FOUND";
     }
-
-    public static void main(String[] args) {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://api.github.com/users/sid7152-glitch/events")).build();
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            // System.out.println(response.body());
-            System.out.println(extractCommitRecords(response.body()));
-        } catch (IOException | InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
 }

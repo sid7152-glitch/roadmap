@@ -1,6 +1,6 @@
-package GitHubLogger;
+package com.astrevia.githubLogger.model;
 
-public class Commit {
+public class CommitModel {
 
     private String eventID = "";
     private String repository = "";
@@ -8,7 +8,7 @@ public class Commit {
     private String beforeHand = "";
     private String createdAt = "";
 
-    public Commit(String eventID, String repository, String commitHead, String beforeHand, String createdAt) {
+    public CommitModel(String eventID, String repository, String commitHead, String beforeHand, String createdAt) {
         this.eventID = eventID;
         this.repository = repository;
         this.commitHead = commitHead;
