@@ -1,6 +1,8 @@
 package com.astrevia.githubLogger.service;
 
 import com.astrevia.githubLogger.model.CommitModel;
+import com.astrevia.githubLogger.repository.CommitRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -19,20 +21,8 @@ public class GitHubLogService {
     @Value("${api.url}")
     private String baseUrl;
 
-    public List<CommitModel> getCommits(String devProfile){
-        HttpClient client = HttpClient.newHttpClient();
-        String baseURL = this.baseUrl.replace("enter_user", devProfile);
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://api.github.com/users/sid7152-glitch/events")).build();
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            // System.out.println(response.body());
-            return extractCommitRecords(response.body());
-        } catch (IOException | InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return null;
-        }
-    }
+    @Autowired
+    private CommitRepository commitRepository;
 
     public static List<CommitModel> extractCommitRecords(String json) {
 
@@ -50,7 +40,7 @@ public class GitHubLogService {
 
             // Only PushEvent contains commit data
             if ("PushEvent".equals(type)) {
-                CommitModel commit = new CommitModel(id, repo, head, before, createdAt);
+                CommitModel commit = new CommitModel(id, head, before, createdAt);
                 commits.add(commit);
             }
         }
@@ -66,5 +56,22 @@ public class GitHubLogService {
             return matcher.group(1);
         }
         return "NOT_FOUND";
+    }
+
+    public List<CommitModel> getCommits(String devProfile) {
+        HttpClient client = HttpClient.newHttpClient();
+        String baseURL = this.baseUrl.replace("enter_user", devProfile);
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseURL)).build();
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            // System.out.println(response.body());
+            List<CommitModel> commits = extractCommitRecords(response.body());
+            commitRepository.saveAll(commits);
+            return commits;
+        } catch (IOException | InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
     }
 }

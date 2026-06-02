@@ -13,7 +13,7 @@ import java.util.List;
 public class GitHubLogController {
     private GitHubLogService gitHubLogService;
 
-    public GitHubLogController(GitHubLogService gitHubLogService){
+    public GitHubLogController(GitHubLogService gitHubLogService) {
         this.gitHubLogService = gitHubLogService;
     }
 
@@ -22,6 +22,7 @@ public class GitHubLogController {
     public String health(@PathVariable("name") String name) {
         return "Established Connection" + name;
     }
+
     @GetMapping("/github")
     public List<CommitModel> gitLogs(@RequestBody DevDTO dev) {
         String devProfile = dev.getDevProfile();
