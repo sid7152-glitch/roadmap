@@ -28,4 +28,9 @@ public class GitHubLogController {
         String devProfile = dev.getDevProfile();
         return gitHubLogService.getCommits(devProfile);
     }
+
+    @GetMapping("/eventid/{eventId}")
+    public String checkEventId(@PathVariable("eventId") String eventId) {
+       return gitHubLogService.checkEventId(eventId);
+    }
 }

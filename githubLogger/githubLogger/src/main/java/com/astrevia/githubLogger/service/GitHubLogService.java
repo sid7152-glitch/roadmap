@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class GitHubLogService {
@@ -66,12 +67,17 @@ public class GitHubLogService {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             // System.out.println(response.body());
             List<CommitModel> commits = extractCommitRecords(response.body());
-            commitRepository.saveAll(commits);
+            List<CommitModel> comits = commits.stream().filter(commit -> !commitRepository.existsByEventID(commit.getEventID())).collect(Collectors.toList());
+            commitRepository.saveAll(comits);
             return commits;
         } catch (IOException | InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
             return null;
         }
+    }
+
+    public String checkEventId(String eventID){
+        return String.valueOf(commitRepository.existsByEventID(eventID));
     }
 }
