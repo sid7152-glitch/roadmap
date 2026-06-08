@@ -2,8 +2,12 @@ package com.astrevia.githubLogger.controller;
 
 
 import com.astrevia.githubLogger.dto.DevDTO;
+import com.astrevia.githubLogger.exception.ErrorResponse;
+import com.astrevia.githubLogger.exception.GitHubAPIException;
 import com.astrevia.githubLogger.model.CommitModel;
 import com.astrevia.githubLogger.service.GitHubLogService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api") // -> parent tag
 public class GitHubLogController {
+    @Autowired
     private GitHubLogService gitHubLogService;
 
     public GitHubLogController(GitHubLogService gitHubLogService) {
@@ -33,4 +38,11 @@ public class GitHubLogController {
     public String checkEventId(@PathVariable("eventId") String eventId) {
        return gitHubLogService.checkEventId(eventId);
     }
+
+    @GetMapping("/github/db")
+    public List<CommitModel> gitLogsfromDB() {
+        return gitHubLogService.getCommitsFromDB();
+    }
+
+    public ResponseEntity<ErrorResponse> hande(GitHubAPIException ex){}
 }

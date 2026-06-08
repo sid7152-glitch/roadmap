@@ -1,5 +1,6 @@
 package com.astrevia.githubLogger.service;
 
+import com.astrevia.githubLogger.exception.GitHubAPIException;
 import com.astrevia.githubLogger.model.CommitModel;
 import com.astrevia.githubLogger.repository.CommitRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class GitHubLogService {
     @Value("${api.url}")
     private String baseUrl;
 
-    @Autowired
+
     private CommitRepository commitRepository;
 
     public static List<CommitModel> extractCommitRecords(String json) {
@@ -65,6 +66,10 @@ public class GitHubLogService {
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseURL)).build();
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if(response.statusCode() != 200){
+                throw new GitHubAPIException("GitHub API failed with status: "
+                        + response.statusCode());
+            }
             // System.out.println(response.body());
             List<CommitModel> commits = extractCommitRecords(response.body());
             List<CommitModel> comits = commits.stream().filter(commit -> !commitRepository.existsByEventID(commit.getEventID())).collect(Collectors.toList());
@@ -79,5 +84,9 @@ public class GitHubLogService {
 
     public String checkEventId(String eventID){
         return String.valueOf(commitRepository.existsByEventID(eventID));
+    }
+
+    public List<CommitModel> getCommitsFromDB(){
+        return commitRepository.findAll();
     }
 }

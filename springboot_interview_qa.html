@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spring Boot Interview Q&A — Siddharth's Study Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@300;400;600;700&display=swap');
+
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --accent: #4f8ef7;
+    --accent2: #f7874f;
+    --accent3: #4ff7a0;
+    --text: #e8eaf0;
+    --muted: #7a7f99;
+    --border: #2a2f45;
+    --tag-bg: #1e2a4a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  /* PRINT STYLES */
+  @media print {
+    body { background: #fff; color: #111; font-size: 12px; }
+    .header { background: #1a1d27 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .section-title { color: #4f8ef7 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .qa-card { border: 1px solid #ddd !important; background: #f9f9f9 !important; break-inside: avoid; margin-bottom: 12px; }
+    .q { background: #e8f0fe !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; color: #111 !important; }
+    .a { color: #222 !important; }
+    code, pre { background: #f0f0f0 !important; color: #c0392b !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .tag { background: #dce8ff !important; color: #1a5ccc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .toc { display: none; }
+    .memory-tip { background: #fff8e1 !important; border-left: 3px solid #f7874f !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; color: #444 !important; }
+    .section { page-break-inside: avoid; }
+  }
+
+  .header {
+    background: linear-gradient(135deg, #131829 0%, #1a2240 100%);
+    padding: 48px 40px 36px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::before {
+    content: '</>';
+    position: absolute;
+    right: 40px;
+    top: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 80px;
+    color: rgba(79,142,247,0.08);
+    font-weight: 600;
+  }
+
+  .header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.5px;
+  }
+
+  .header h1 span { color: var(--accent); }
+
+  .header p {
+    color: var(--muted);
+    margin-top: 8px;
+    font-size: 13px;
+    font-weight: 300;
+  }
+
+  .badge {
+    display: inline-block;
+    background: var(--tag-bg);
+    color: var(--accent);
+    border: 1px solid rgba(79,142,247,0.3);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: 14px;
+    margin-right: 6px;
+  }
+
+  .badge.orange { color: var(--accent2); border-color: rgba(247,135,79,0.3); background: #2a1e12; }
+  .badge.green { color: var(--accent3); border-color: rgba(79,247,160,0.3); background: #122a1e; }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 32px 40px; }
+
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 36px;
+  }
+
+  .toc h3 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .toc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  .toc a {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 13px;
+    padding: 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .toc a:hover { color: #fff; }
+  .toc-num { color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+
+  .section { margin-bottom: 40px; }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-title .num {
+    background: var(--accent);
+    color: #fff;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+  }
+
+  .qa-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+
+  .q {
+    background: var(--surface2);
+    padding: 14px 18px;
+    font-weight: 600;
+    font-size: 13.5px;
+    color: #fff;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .q-icon {
+    background: var(--accent);
+    color: #fff;
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .a {
+    padding: 14px 18px;
+    color: #c8cce0;
+    font-size: 13px;
+  }
+
+  .a p { margin-bottom: 8px; }
+  .a p:last-child { margin-bottom: 0; }
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    background: #12151f;
+    color: #7dd3fc;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+
+  pre {
+    font-family: 'JetBrains Mono', monospace;
+    background: #0d1018;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 12px;
+    color: #a8b4d0;
+    overflow-x: auto;
+    margin: 10px 0;
+    line-height: 1.6;
+  }
+
+  pre .kw { color: #7dd3fc; }
+  pre .str { color: #86efac; }
+  pre .ann { color: #fbbf24; }
+  pre .cmt { color: #4a5568; }
+
+  .tag {
+    display: inline-block;
+    background: var(--tag-bg);
+    color: var(--accent);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    margin: 2px;
+  }
+
+  .memory-tip {
+    background: rgba(247,135,79,0.08);
+    border-left: 3px solid var(--accent2);
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    margin-top: 10px;
+    font-size: 12px;
+    color: #c8a87a;
+  }
+
+  .memory-tip strong { color: var(--accent2); }
+
+  .flow {
+    background: #0d1018;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: #a8b4d0;
+    margin: 10px 0;
+    line-height: 2;
+  }
+
+  .flow .arrow { color: var(--accent); }
+  .flow .highlight { color: var(--accent3); }
+  .flow .warn { color: var(--accent2); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 12px;
+  }
+
+  th {
+    background: var(--surface2);
+    color: var(--accent);
+    padding: 8px 12px;
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    color: #c8cce0;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 32px 0;
+  }
+
+  .footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 11px;
+    padding: 24px 0 32px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Spring Boot <span>Interview Q&A</span></h1>
+  <p>Concepts from your GitHub Logger project — mapped to real interview questions</p>
+  <div>
+    <span class="badge">Spring Boot</span>
+    <span class="badge">JPA / Hibernate</span>
+    <span class="badge orange">Java 8+</span>
+    <span class="badge green">Microservices</span>
+    <span class="badge">PostgreSQL</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="toc">
+    <h3>// Table of Contents</h3>
+    <div class="toc-grid">
+      <a href="#s1"><span class="toc-num">01</span> Spring Boot Basics</a>
+      <a href="#s2"><span class="toc-num">02</span> IoC & Dependency Injection</a>
+      <a href="#s3"><span class="toc-num">03</span> JPA & Hibernate</a>
+      <a href="#s4"><span class="toc-num">04</span> Spring Data JPA</a>
+      <a href="#s5"><span class="toc-num">05</span> Exception Handling</a>
+      <a href="#s6"><span class="toc-num">06</span> Java 8 Features</a>
+      <a href="#s7"><span class="toc-num">07</span> Microservices</a>
+      <a href="#s8"><span class="toc-num">08</span> Bean Lifecycle</a>
+    </div>
+  </div>
+
+  <!-- SECTION 1 -->
+  <div class="section" id="s1">
+    <div class="section-title"><span class="num">1</span> Spring Boot Basics</div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is the difference between @Controller and @RestController?</div>
+      <div class="a">
+        <p><code>@Controller</code> returns a view (HTML page). <code>@RestController</code> returns data directly as JSON/XML — it's a combination of <code>@Controller</code> + <code>@ResponseBody</code>.</p>
+        <p>In your GitHub Logger — you used <code>@RestController</code> because you're building a REST API that returns JSON commits, not HTML pages.</p>
+        <div class="memory-tip"><strong>💡 Remember:</strong> @RestController = API. @Controller = web page. You built an API, so @RestController.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What does @RequestMapping, @GetMapping, @PostMapping do?</div>
+      <div class="a">
+        <p><code>@RequestMapping("/api")</code> — sets the base URL for all endpoints in a controller.</p>
+        <p><code>@GetMapping("/commits")</code> — maps HTTP GET requests to a method. Used for fetching data.</p>
+        <p><code>@PostMapping("/commits")</code> — maps HTTP POST requests. Used for creating data.</p>
+        <table>
+          <tr><th>Annotation</th><th>HTTP Method</th><th>Used For</th></tr>
+          <tr><td><code>@GetMapping</code></td><td>GET</td><td>Fetch data</td></tr>
+          <tr><td><code>@PostMapping</code></td><td>POST</td><td>Create data</td></tr>
+          <tr><td><code>@PutMapping</code></td><td>PUT</td><td>Update data</td></tr>
+          <tr><td><code>@DeleteMapping</code></td><td>DELETE</td><td>Delete data</td></tr>
+        </table>
+        <div class="memory-tip"><strong>💡 Remember:</strong> Your /api/commits GET endpoint fetches commits from DB. /api/github GET fetches from GitHub API and saves.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is @Value annotation?</div>
+      <div class="a">
+        <p>Injects values from <code>application.properties</code> directly into your class fields.</p>
+        <pre><code>@Value("${api.url}")
+private String baseUrl;</code></pre>
+        <p>In your project — the GitHub API URL was stored in <code>application.properties</code> and injected using <code>@Value</code> so you never hardcode URLs in code.</p>
+        <div class="memory-tip"><strong>💡 Remember:</strong> You used @Value to inject the GitHub API URL dynamically instead of hardcoding it in GitHubLogService.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is application.properties used for?</div>
+      <div class="a">
+        <p>Central configuration file for your Spring Boot app. Stores DB credentials, API URLs, server port, JPA settings — anything that shouldn't be hardcoded.</p>
+        <pre>spring.datasource.url=jdbc:postgresql://localhost:5432/github_logger
+spring.datasource.username=postgres
+api.url=https://api.github.com/users/enter_user/events
+spring.jpa.show-sql=true</pre>
+        <div class="memory-tip"><strong>💡 Remember:</strong> You moved GitHub API URL and DB credentials here. Never put these in Java code directly.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 2 -->
+  <div class="section" id="s2">
+    <div class="section-title"><span class="num">2</span> IoC Container & Dependency Injection</div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is IoC Container?</div>
+      <div class="a">
+        <p>IoC = Inversion of Control. Instead of your code creating objects manually using <code>new</code>, Spring creates and manages them for you. The container is a big box that holds all beans and injects them where needed.</p>
+        <div class="flow">
+          <span class="warn">Without IoC:</span> CommitRepository repo = new CommitRepository(); <span class="cmt">// you manage it</span><br>
+          <span class="highlight">With IoC:</span> Spring creates it → puts in container → injects wherever needed
+        </div>
+        <div class="memory-tip"><strong>💡 Remember:</strong> IoC = Spring manages objects, not you. Hotel analogy — you don't manufacture towels, housekeeping brings them.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is @Autowired and Dependency Injection?</div>
+      <div class="a">
+        <p>Dependency Injection means Spring automatically provides the objects your class needs. <code>@Autowired</code> is how you request an object from Spring's container.</p>
+        <pre><span class="ann">@Autowired</span>
+<span class="kw">private</span> CommitRepository commitRepository;
+<span class="cmt">// Spring finds CommitRepository bean → injects here automatically</span></pre>
+        <p>You never write <code>new CommitRepository()</code>. Spring handles it.</p>
+        <div class="memory-tip"><strong>💡 Remember:</strong> In GitHubLogService — you @Autowired CommitRepository. Spring injected it automatically. You just used it.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What annotations make a class a Spring Bean?</div>
+      <div class="a">
+        <table>
+          <tr><th>Annotation</th><th>Used On</th><th>Purpose</th></tr>
+          <tr><td><code>@Service</code></td><td>Service classes</td><td>Business logic</td></tr>
+          <tr><td><code>@Repository</code></td><td>DB classes</td><td>Data access</td></tr>
+          <tr><td><code>@Controller</code></td><td>Controller classes</td><td>Handle HTTP</td></tr>
+          <tr><td><code>@Component</code></td><td>Any class</td><td>Generic bean</td></tr>
+        </table>
+        <p>Spring scans at startup, finds these annotations, creates objects and puts them in the IoC container.</p>
+        <div class="memory-tip"><strong>💡 Remember:</strong> GitHubLogService = @Service. CommitRepository = @Repository. GitHubLogController = @RestController.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 3 -->
+  <div class="section" id="s3">
+    <div class="section-title"><span class="num">3</span> JPA & Hibernate</div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is JPA and Hibernate?</div>
+      <div class="a">
+        <p><strong>JPA</strong> (Java Persistence API) — a specification/interface that defines how Java objects map to DB tables. It's just rules, not implementation.</p>
+        <p><strong>Hibernate</strong> — the actual implementation of JPA. It generates SQL, manages connections, handles transactions.</p>
+        <div class="flow">
+          Your Code <span class="arrow">→</span> JPA (interface) <span class="arrow">→</span> Hibernate (implementation) <span class="arrow">→</span> PostgreSQL
+        </div>
+        <div class="memory-tip"><strong>💡 Remember:</strong> JPA is the contract. Hibernate is the worker that actually does the job. Like an interface vs class in Java.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is @Entity and @Table?</div>
+      <div class="a">
+        <p><code>@Entity</code> — tells JPA this Java class maps to a DB table.</p>
+        <p><code>@Table(name = "commit_records")</code> — specifies which exact table it maps to.</p>
+        <pre><span class="ann">@Entity</span>
+<span class="ann">@Table</span>(name = <span class="str">"commit_records"</span>)
+<span class="kw">public class</span> CommitModel { ... }</pre>
+        <div class="memory-tip"><strong>💡 Remember:</strong> CommitModel class = commit_records table. @Entity connects them. @Table names the table.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is @Id and @GeneratedValue?</div>
+      <div class="a">
+        <p><code>@Id</code> — marks the primary key field.</p>
+        <p><code>@GeneratedValue(strategy = GenerationType.IDENTITY)</code> — tells Hibernate to let the DB generate the ID. Maps to PostgreSQL's <code>BIGSERIAL</code>.</p>
+        <pre><span class="ann">@Id</span>
+<span class="ann">@GeneratedValue</span>(strategy = GenerationType.IDENTITY)
+<span class="kw">private long</span> id;</pre>
+        <p>When you call <code>save()</code> — Hibernate inserts without ID. Postgres generates it via BIGSERIAL. Hibernate reads it back and sets it on your object.</p>
+        <div class="memory-tip"><strong>💡 Remember:</strong> BIGSERIAL in Postgres does the job. @GeneratedValue(IDENTITY) just tells Hibernate "step back, DB handles ID."</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is @Column?</div>
+      <div class="a">
+        <p>Maps a Java field to a specific DB column name.</p>
+        <pre><span class="ann">@Column</span>(name = <span class="str">"event_id"</span>, unique = <span class="kw">true</span>)
+<span class="kw">private</span> String eventID;</pre>
+        <p>Without <code>@Column</code> — Hibernate maps field name directly. With it — you control the exact column name and constraints like <code>unique</code>, <code>nullable</code>.</p>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> How does Hibernate generate and execute a query?</div>
+      <div class="a">
+        <div class="flow">
+          commitRepository.save(commit)<br>
+          <span class="arrow">↓</span> Hibernate reads @Entity, @Table, @Column annotations<br>
+          <span class="arrow">↓</span> Builds: INSERT INTO commit_records (event_id, commit_head...) VALUES (?, ?, ...)<br>
+          <span class="arrow">↓</span> JDBC replaces ? with actual values (Prepared Statement)<br>
+          <span class="arrow">↓</span> PostgreSQL executes, BIGSERIAL generates ID<span><br>
+          <span class="arrow">↓</span> Hibernate reads generated ID back → sets on your object
+        </div>
+        <div class="memory-tip"><strong>💡 Remember:</strong> show-sql=true in application.properties shows you exactly what SQL Hibernate generates. Use it for debugging.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is ddl-auto and what are the options?</div>
+      <div class="a">
+        <table>
+          <tr><th>Value</th><th>What it does</th><th>Use when</th></tr>
+          <tr><td><code>create</code></td><td>Drop and recreate tables every startup</td><td>Never in production</td></tr>
+          <tr><td><code>update</code></td><td>Alter tables to match entities</td><td>Development only</td></tr>
+          <tr><td><code>validate</code></td><td>Check entities match tables, touch nothing</td><td>You created tables manually</td></tr>
+          <tr><td><code>none</code></td><td>Does nothing</td><td>Full manual control</td></tr>
+        </table>
+        <div class="memory-tip"><strong>💡 Remember:</strong> You used validate because you created tables manually in pgAdmin. Spring just verifies the mapping is correct.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 4 -->
+  <div class="section" id="s4">
+    <div class="section-title"><span class="num">4</span> Spring Data JPA</div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is JpaRepository?</div>
+      <div class="a">
+        <p>A Spring Data interface that gives you ready-made DB operations without writing SQL or implementation code.</p>
+        <pre><span class="ann">@Repository</span>
+<span class="kw">public interface</span> CommitRepository <span class="kw">extends</span> JpaRepository&lt;CommitModel, Long&gt; { }</pre>
+        <p><code>JpaRepository&lt;T1, T2&gt;</code> — T1 is the Entity class, T2 is the primary key type.</p>
+        <p>Built-in methods you get for free: <code>save()</code>, <code>saveAll()</code>, <code>findAll()</code>, <code>findById()</code>, <code>deleteById()</code>, <code>count()</code></p>
+        <div class="memory-tip"><strong>💡 Remember:</strong> Zero SQL written. Spring generates implementation at runtime using proxy pattern. Just extend the interface.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What are Derived Query Methods?</div>
+      <div class="a">
+        <p>Spring Data generates SQL automatically just from the method name. Follow the naming convention and Spring does the rest.</p>
+        <table>
+          <tr><th>Method</th><th>Generated SQL</th><th>Returns</th></tr>
+          <tr><td><code>existsByEventID(id)</code></td><td>SELECT COUNT(*) > 0 WHERE event_id = ?</td><td>boolean</td></tr>
+          <tr><td><code>findByRepository(repo)</code></td><td>SELECT * WHERE repository = ?</td><td>List</td></tr>
+          <tr><td><code>countByCreatedAt(date)</code></td><td>SELECT COUNT(*) WHERE created_at = ?</td><td>long</td></tr>
+          <tr><td><code>deleteByEventID(id)</code></td><td>DELETE WHERE event_id = ?</td><td>void</td></tr>
+        </table>
+        <div class="memory-tip"><strong>💡 Remember:</strong> You used existsByEventID() to prevent duplicate entries before saveAll(). Spring generated the EXISTS query automatically from the method name.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is the difference between findBy, existsBy, countBy, deleteBy?</div>
+      <div class="a">
+        <table>
+          <tr><th>Keyword</th><th>Purpose</th><th>Returns</th></tr>
+          <tr><td><code>findBy</code></td><td>Fetch matching records</td><td>List or Object</td></tr>
+          <tr><td><code>existsBy</code></td><td>Check if record exists</td><td>boolean</td></tr>
+          <tr><td><code>countBy</code></td><td>Count matching records</td><td>long</td></tr>
+          <tr><td><code>deleteBy</code></td><td>Delete matching records</td><td>void</td></tr>
+        </table>
+        <p>⚠️ Note: It's <code>existsBy</code> not <code>existBy</code> — missing the 's' will throw a "No property found" error.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 5 -->
+  <div class="section" id="s5">
+    <div class="section-title"><span class="num">5</span> Exception Handling</div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is Global Exception Handling and why do we need it?</div>
+      <div class="a">
+        <p>Without it — when something fails, Spring dumps an ugly stack trace to the client. With it — you intercept exceptions and return a clean, structured JSON error response.</p>
+        <div class="flow">
+          <span class="warn">Without:</span> 500 Internal Server Error + java.lang.RuntimeException stack trace dump<br><br>
+          <span class="highlight">With:</span> { "timestamp": "...", "status": 500, "error": "GitHub API failed with status: 403" }
+        </div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is @RestControllerAdvice vs @RestController?</div>
+      <div class="a">
+        <table>
+          <tr><th></th><th>@RestController</th><th>@RestControllerAdvice</th></tr>
+          <tr><td>Purpose</td><td>Handle HTTP requests</td><td>Handle exceptions</td></tr>
+          <tr><td>Scope</td><td>Single controller</td><td>ALL controllers</td></tr>
+          <tr><td>Triggered by</td><td>HTTP request</td><td>Exception thrown</td></tr>
+          <tr><td>Contains</td><td>@GetMapping etc</td><td>@ExceptionHandler methods</td></tr>
+        </table>
+        <div class="memory-tip"><strong>💡 Remember:</strong> @RestController = main chef. @RestControllerAdvice = manager at the exit. Anything goes wrong anywhere — manager intercepts it.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is ResponseEntity and why use generics with it?</div>
+      <div class="a">
+        <p><code>ResponseEntity</code> gives you full control over the HTTP response — status code, headers, and body together.</p>
+        <pre><span class="kw">return</span> ResponseEntity
+    .status(HttpStatus.INTERNAL_SERVER_ERROR)  <span class="cmt">// you control status</span>
+    .body(error);                               <span class="cmt">// you control body</span></pre>
+        <p>Generics <code>ResponseEntity&lt;ErrorResponse&gt;</code> — tells Spring the body will be of type <code>ErrorResponse</code>. Provides compile-time type safety. Wrong object in body = compiler error immediately.</p>
+        <div class="memory-tip"><strong>💡 Remember:</strong> ResponseEntity = envelope. You control what's inside. Generics = label on envelope saying what's inside. Output is same but generics prevent wrong data being sent.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is a custom exception and why use it over RuntimeException?</div>
+      <div class="a">
+        <p>A custom exception gives a specific, meaningful name to the error instead of a generic one.</p>
+        <pre><span class="kw">public class</span> GitHubAPIException <span class="kw">extends</span> RuntimeException {
+    <span class="kw">public</span> GitHubAPIException(String message) {
+        <span class="kw">super</span>(message);
+    }
+}</pre>
+        <p><code>RuntimeException</code> = "something went wrong somewhere." <code>GitHubAPIException</code> = "the GitHub API specifically failed." Anyone reading the code immediately understands what happened.</p>
+        <div class="memory-tip"><strong>💡 Remember:</strong> Custom exception = specific name for a specific problem. Makes code readable and exception handlers more precise.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is the full exception handling flow?</div>
+      <div class="a">
+        <div class="flow">
+          GitHub API returns 403<br>
+          <span class="arrow">↓</span> Service throws GitHubAPIException("GitHub API failed: 403")<br>
+          <span class="arrow">↓</span> Exception bubbles through Controller (no handler there)<br>
+          <span class="arrow">↓</span> <span class="highlight">@RestControllerAdvice intercepts</span><br>
+          <span class="arrow">↓</span> @ExceptionHandler(GitHubAPIException.class) matches<br>
+          <span class="arrow">↓</span> ErrorResponse DTO created with timestamp, status, message<br>
+          <span class="arrow">↓</span> ResponseEntity wraps it with HTTP 500<br>
+          <span class="arrow">↓</span> Clean JSON sent to client
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 6 -->
+  <div class="section" id="s6">
+    <div class="section-title"><span class="num">6</span> Java 8+ Features</div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is a Functional Interface?</div>
+      <div class="a">
+        <p>An interface with exactly ONE abstract method. Used with lambda expressions.</p>
+        <pre><span class="ann">@FunctionalInterface</span>
+<span class="kw">public interface</span> MyFunction {
+    <span class="kw">void</span> execute(); <span class="cmt">// only one abstract method</span>
+}</pre>
+        <p>Built-in examples: <code>Runnable</code>, <code>Callable</code>, <code>Comparator</code>, <code>Predicate</code>, <code>Function</code></p>
+        <div class="memory-tip"><strong>💡 Remember:</strong> One method = Functional Interface. That's the contract. @FunctionalInterface annotation enforces this rule at compile time.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What are the three ways to implement a Functional Interface?</div>
+      <div class="a">
+        <pre><span class="cmt">// 1. Anonymous class (old way)</span>
+MyFunction f = <span class="kw">new</span> MyFunction() {
+    <span class="kw">public void</span> execute() { System.out.println(<span class="str">"Hello"</span>); }
+};
+
+<span class="cmt">// 2. Lambda (clean way)</span>
+MyFunction f = () -> System.out.println(<span class="str">"Hello"</span>);
+
+<span class="cmt">// 3. Method reference (shortest)</span>
+MyFunction f = MyClass::myMethod;</pre>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What are Streams? Explain one method.</div>
+      <div class="a">
+        <p>Streams process collections in a pipeline without modifying the original data. Introduced in Java 8.</p>
+        <pre><span class="cmt">// filter() — keeps elements matching condition</span>
+List&lt;CommitModel&gt; newCommits = commits.stream()
+    .filter(c -> !commitRepository.existsByEventID(c.getEventID()))
+    .collect(Collectors.toList());</pre>
+        <p>Common stream methods: <code>filter()</code>, <code>map()</code>, <code>reduce()</code>, <code>sorted()</code>, <code>forEach()</code>, <code>collect()</code></p>
+        <div class="memory-tip"><strong>💡 Remember:</strong> You used streams in GitHubLogService to filter out duplicate commits before saving. filter() is the exact method you used.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is Optional class?</div>
+      <div class="a">
+        <p>A wrapper class to handle null values safely and avoid <code>NullPointerException</code>.</p>
+        <pre>Optional&lt;String&gt; name = Optional.of(<span class="str">"Siddharth"</span>);
+name.isPresent();         <span class="cmt">// true</span>
+name.get();               <span class="cmt">// "Siddharth"</span>
+name.orElse(<span class="str">"Unknown"</span>); <span class="cmt">// returns value or default if empty</span></pre>
+        <div class="memory-tip"><strong>💡 Remember:</strong> Optional = box that may or may not contain a value. orElse() is your safety net — gives a default if box is empty.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 7 -->
+  <div class="section" id="s7">
+    <div class="section-title"><span class="num">7</span> Microservices</div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> How do Microservices communicate with each other?</div>
+      <div class="a">
+        <p>Two ways:</p>
+        <p><strong>Synchronous</strong> — REST API calls over HTTP. One service calls another directly and waits for response. Tools: RestTemplate, WebClient, Feign Client.</p>
+        <p><strong>Asynchronous</strong> — Message queues. One service publishes a message, another consumes it independently. No waiting. Tools: Kafka, RabbitMQ, IBM MQ.</p>
+        <table>
+          <tr><th>Type</th><th>Tools</th><th>Use When</th></tr>
+          <tr><td>Synchronous</td><td>RestTemplate, WebClient, Feign</td><td>Immediate response needed</td></tr>
+          <tr><td>Asynchronous</td><td>Kafka, RabbitMQ, IBM MQ</td><td>Decoupled, high volume</td></tr>
+        </table>
+        <div class="memory-tip"><strong>💡 Remember:</strong> IBM MQ at Accenture = asynchronous messaging. Kafka = modern version of same concept. You're already familiar with the idea.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What are Containers in cloud context?</div>
+      <div class="a">
+        <p><strong>Docker containers</strong> — lightweight isolated environments. Your app + all its dependencies packaged together. Runs the same on any machine.</p>
+        <p><strong>Kubernetes</strong> — manages and orchestrates multiple containers. Auto scaling, load balancing, health checks.</p>
+        <div class="flow">
+          Your Spring Boot App <span class="arrow">→</span> Docker Image <span class="arrow">→</span> Docker Container <span class="arrow">→</span> Kubernetes Pod <span class="arrow">→</span> Cloud (GCP/AWS)
+        </div>
+        <div class="memory-tip"><strong>💡 Remember:</strong> At Accenture you check pod logs — those pods are Kubernetes containers running the application. You're already seeing this in production.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is Spring Security?</div>
+      <div class="a">
+        <p>A framework that handles Authentication and Authorization in Spring Boot.</p>
+        <p><strong>Authentication</strong> — Who are you? (Login, JWT token verification)</p>
+        <p><strong>Authorization</strong> — What can you access? (Role based access — ADMIN, USER etc)</p>
+        <p>Commonly implemented with JWT tokens where user logs in, gets a token, and sends it with every request.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 8 -->
+  <div class="section" id="s8">
+    <div class="section-title"><span class="num">8</span> Bean Lifecycle</div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is the lifecycle of a Spring Bean?</div>
+      <div class="a">
+        <div class="flow">
+          <span class="highlight">1. Instantiation</span> — Spring creates the object<br>
+          <span class="arrow">↓</span><br>
+          <span class="highlight">2. Dependency Injection</span> — @Autowired fields are populated<br>
+          <span class="arrow">↓</span><br>
+          <span class="highlight">3. @PostConstruct</span> — runs after bean is fully initialized<br>
+          <span class="arrow">↓</span><br>
+          <span class="highlight">4. Bean Ready</span> — available for use in application<br>
+          <span class="arrow">↓</span><br>
+          <span class="highlight">5. @PreDestroy</span> — runs before bean is destroyed<br>
+          <span class="arrow">↓</span><br>
+          <span class="highlight">6. Destroyed</span> — bean removed from container
+        </div>
+        <pre><span class="ann">@PostConstruct</span>
+<span class="kw">public void</span> init() {
+    <span class="cmt">// runs after GitHubLogService is fully created and injected</span>
+}
+
+<span class="ann">@PreDestroy</span>
+<span class="kw">public void</span> cleanup() {
+    <span class="cmt">// runs before Spring shuts down</span>
+}</pre>
+        <div class="memory-tip"><strong>💡 Remember:</strong> @PostConstruct = "I'm ready, do setup." @PreDestroy = "I'm shutting down, do cleanup." Like constructor and destructor but Spring managed.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> How to add a custom dependency in pom.xml?</div>
+      <div class="a">
+        <pre>&lt;<span class="kw">dependency</span>&gt;
+    &lt;<span class="kw">groupId</span>&gt;org.postgresql&lt;/<span class="kw">groupId</span>&gt;       <span class="cmt">&lt;!-- organisation --&gt;</span>
+    &lt;<span class="kw">artifactId</span>&gt;postgresql&lt;/<span class="kw">artifactId</span>&gt;   <span class="cmt">&lt;!-- library name --&gt;</span>
+    &lt;<span class="kw">version</span>&gt;42.7.10&lt;/<span class="kw">version</span>&gt;           <span class="cmt">&lt;!-- specific version --&gt;</span>
+    &lt;<span class="kw">scope</span>&gt;runtime&lt;/<span class="kw">scope</span>&gt;               <span class="cmt">&lt;!-- when to include --&gt;</span>
+&lt;/<span class="kw">dependency</span>&gt;</pre>
+        <table>
+          <tr><th>Scope</th><th>Meaning</th></tr>
+          <tr><td><code>compile</code></td><td>Available everywhere (default)</td></tr>
+          <tr><td><code>runtime</code></td><td>Only needed at runtime, not compile time</td></tr>
+          <tr><td><code>test</code></td><td>Only for tests</td></tr>
+        </table>
+        <div class="memory-tip"><strong>💡 Remember:</strong> PostgreSQL driver is runtime scope — you don't reference it in code, Spring uses it behind the scenes to connect to DB.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 32px;">
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px;">// Your Project — Quick Reference</div>
+    <table>
+      <tr><th>Class</th><th>Annotation</th><th>Role</th></tr>
+      <tr><td><code>GithubLoggerApplication</code></td><td>@SpringBootApplication</td><td>Entry point</td></tr>
+      <tr><td><code>GitHubLogController</code></td><td>@RestController</td><td>Handles HTTP requests</td></tr>
+      <tr><td><code>GitHubLogService</code></td><td>@Service</td><td>Business logic, API calls</td></tr>
+      <tr><td><code>CommitRepository</code></td><td>@Repository</td><td>DB operations</td></tr>
+      <tr><td><code>CommitModel</code></td><td>@Entity</td><td>Maps to commit_records table</td></tr>
+      <tr><td><code>GlobalExceptionHandler</code></td><td>@RestControllerAdvice</td><td>Intercepts all exceptions</td></tr>
+      <tr><td><code>GitHubAPIException</code></td><td>extends RuntimeException</td><td>Custom exception</td></tr>
+      <tr><td><code>ErrorResponse</code></td><td>POJO</td><td>JSON error structure</td></tr>
+    </table>
+  </div>
+
+</div>
+
+<div class="footer">
+  // springboot_interview_qa.html — Siddharth's Study Guide — June 2026
+</div>
+
+</body>
+</html>
