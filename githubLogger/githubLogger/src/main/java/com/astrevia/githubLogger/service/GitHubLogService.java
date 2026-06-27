@@ -23,7 +23,7 @@ public class GitHubLogService {
     @Value("${api.url}")
     private String baseUrl;
 
-
+    @Autowired
     private CommitRepository commitRepository;
 
     public static List<CommitModel> extractCommitRecords(String json) {
@@ -76,9 +76,7 @@ public class GitHubLogService {
             commitRepository.saveAll(comits);
             return commits;
         } catch (IOException | InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return null;
+            throw new GitHubAPIException("Failed to connect to GitHub API: " + e.getMessage());
         }
     }
 

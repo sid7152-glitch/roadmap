@@ -10,8 +10,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
 public class GithubLoggerApplication {
 
     public static void main(String[] args) {
-        ApplicationContext context ;
-//        SpringApplication.run(GithubLoggerApplication.class, args);
+//        ApplicationContext context ;
+        SpringApplication.run(GithubLoggerApplication.class, args);
     }
 
 }

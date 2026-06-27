@@ -836,8 +836,154 @@ name.orElse(<span class="str">"Unknown"</span>); <span class="cmt">// returns va
 
 </div>
 
+  <!-- PROJECT PROGRESS -->
+  <div class="section" id="s9">
+    <div class="section-title"><span class="num" style="background:#4ff7a0;color:#0f1117">✓</span> GitHub Logger — Project Status</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent3);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">✅ Completed</div>
+        <div style="font-size:13px;color:#c8cce0;line-height:2;">
+          ✅ Core engine — GitHub API with pure Java HttpClient<br>
+          ✅ JSON parsing — regex based, no external libraries<br>
+          ✅ Spring Boot MVC — Controller, Service, Repository<br>
+          ✅ PostgreSQL integration — JPA entity mapping<br>
+          ✅ Duplicate prevention — <code>existsByEventID</code><br>
+          ✅ GET from DB endpoint<br>
+          ✅ Global Exception Handling — full flow working<br>
+          ✅ application.properties — no hardcoded values<br>
+          ✅ @RequestParam — clean GET endpoint
+        </div>
+      </div>
+
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent2);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">⏳ Remaining</div>
+        <div style="font-size:13px;color:#c8cce0;line-height:2;">
+          ⏳ Scheduler — auto fetch periodically<br>
+          ⏳ User table wiring — JPA relationships<br>
+          ⏳ Repository table wiring — Many-to-Many<br>
+          ⏳ README — document the project<br>
+          ⏳ Push to GitHub — portfolio ready<br>
+          ⏳ Microservices split (Phase 2)<br>
+          ⏳ Kafka integration (Phase 3)<br>
+          ⏳ Docker + Kubernetes (Phase 4)
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Exception Handling Flow -->
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> Walk me through your exception handling implementation</div>
+      <div class="a">
+        <p>Built a three-layer exception handling architecture in the GitHub Logger project:</p>
+        <div class="flow">
+          <span class="warn">GitHubAPIException</span> — custom exception extending RuntimeException. Thrown when GitHub API returns non-200 status or connection fails. Gives meaningful name to the error.<br><br>
+          <span class="warn">ErrorResponse DTO</span> — POJO with timestamp, status, error fields. Jackson serializes it to clean JSON automatically.<br><br>
+          <span class="warn">GlobalExceptionHandler</span> — @RestControllerAdvice intercepts all escaping exceptions. Two handlers: GitHubAPIException → 500, Exception → 400 fallback.<br><br>
+          <span class="highlight">Result:</span> {"timestamp":"...","status":500,"error":"GitHub API failed with status: 404"}
+        </div>
+        <div class="memory-tip"><strong>💡 You tested this:</strong> Hitting /api/github?devProfile=invaliduser999999 returned clean JSON error with status 500. Stack trace gone completely.</div>
+      </div>
+    </div>
+
+    <!-- RequestParam vs RequestBody -->
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is the difference between @RequestParam and @RequestBody?</div>
+      <div class="a">
+        <table>
+          <tr><th></th><th>@RequestParam</th><th>@RequestBody</th></tr>
+          <tr><td>Used with</td><td>GET requests</td><td>POST/PUT requests</td></tr>
+          <tr><td>Data location</td><td>URL query string</td><td>Request body JSON</td></tr>
+          <tr><td>Example URL</td><td>/api/github?devProfile=sid</td><td>/api/github (body has JSON)</td></tr>
+          <tr><td>Use when</td><td>Fetching data</td><td>Creating/updating data</td></tr>
+        </table>
+        <pre><span class="cmt">// @RequestParam — data comes from URL</span>
+<span class="ann">@GetMapping</span>(<span class="str">"/github"</span>)
+<span class="kw">public</span> List&lt;CommitModel&gt; gitLogs(<span class="ann">@RequestParam</span> String devProfile) { }
+
+<span class="cmt">// @RequestBody — data comes from request body</span>
+<span class="ann">@PostMapping</span>(<span class="str">"/github"</span>)
+<span class="kw">public</span> List&lt;CommitModel&gt; gitLogs(<span class="ann">@RequestBody</span> DevDTO dev) { }</pre>
+        <div class="memory-tip"><strong>💡 Remember:</strong> You initially used @RequestBody on a GET — that caused "Required request body is missing" error. Fixed by switching to @RequestParam.</div>
+      </div>
+    </div>
+
+    <!-- Constructor Injection -->
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What are the types of Dependency Injection and which is recommended?</div>
+      <div class="a">
+        <table>
+          <tr><th>Type</th><th>How</th><th>Recommended</th></tr>
+          <tr><td>Field Injection</td><td>@Autowired on field</td><td>❌ Old way</td></tr>
+          <tr><td>Constructor Injection</td><td>Constructor parameter</td><td>✅ Recommended</td></tr>
+          <tr><td>Lombok Constructor</td><td>@RequiredArgsConstructor + final</td><td>✅ Cleanest</td></tr>
+        </table>
+        <pre><span class="cmt">// Old way — field injection</span>
+<span class="ann">@Autowired</span>
+<span class="kw">private</span> CommitRepository commitRepository;
+
+<span class="cmt">// Modern way — constructor injection via Lombok</span>
+<span class="ann">@Service</span>
+<span class="ann">@RequiredArgsConstructor</span>
+<span class="kw">public class</span> GitHubLogService {
+    <span class="kw">private final</span> CommitRepository commitRepository;
+}</pre>
+        <div class="memory-tip"><strong>💡 Remember:</strong> In modern Spring Boot — if class has one constructor, @Autowired is optional. Spring injects automatically. @RequiredArgsConstructor + final is the cleanest approach.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- CAREER PLAN -->
+  <div class="section" id="s10">
+    <div class="section-title"><span class="num" style="background:var(--accent2);color:#fff">→</span> Career Roadmap — June 2026</div>
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:14px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:16px;">// Timeline</div>
+      <div class="flow" style="line-height:2.2;">
+        <span class="highlight">Now → Sep 2026</span> — Build GitHub Logger, Spring Essentials training, stay sharp<br>
+        <span class="arrow">↓</span><br>
+        <span class="highlight">Aug → Sep 2026</span> — Start exploring externally, attend interviews quietly<br>
+        <span class="arrow">↓</span><br>
+        <span class="highlight">Jan 2027</span> — Formal roll off request to Firoj (email, on record)<br>
+        <span class="arrow">↓</span><br>
+        <span class="highlight">May 2027</span> — Hard exit deadline. Internal switch or external offer.<br>
+        <span class="arrow">↓</span><br>
+        <span class="highlight">2027 onwards</span> — Java Backend Developer → Tech Lead (2029-30) → Engineering Manager (2032+)
+      </div>
+    </div>
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:14px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:16px;">// BCT Interview — Lessons Learned</div>
+      <table>
+        <tr><th>Feedback</th><th>Fix</th></tr>
+        <tr><td>Crisp answers were elaborate</td><td>Simple Q = 1-2 sentences max. Definition + one example.</td></tr>
+        <tr><td>Elaborate answers were crisp</td><td>Design Q = slow down. Problem → Approach → Why → Tradeoffs.</td></tr>
+        <tr><td>Forgot annotations under pressure</td><td>Type code daily, not just read. Muscle memory > memorization.</td></tr>
+        <tr><td>Java 21 on resume, Java 8 in practice</td><td>Be precise. Claim only what you can defend in code.</td></tr>
+        <tr><td>No specific exception name in war story</td><td>Prepare 2-3 real incidents with exact exception names before JP Morgan.</td></tr>
+        <tr><td>React.js = 0</td><td>Honesty was right. Mention Kony.js similarity. Don't pretend.</td></tr>
+      </table>
+    </div>
+
+    <div style="background:rgba(79,142,247,0.06);border:1px solid rgba(79,142,247,0.2);border-radius:10px;padding:16px 20px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;">// What You've Built So Far</div>
+      <div style="font-size:13px;color:#c8cce0;line-height:1.9;">
+        A Spring Boot application that integrates with GitHub REST API to fetch repository activity, parses JSON using pure Java regex, persists commit records to PostgreSQL via JPA with duplicate prevention, exposes REST endpoints, and handles failures gracefully with a custom exception architecture.
+      </div>
+      <div class="memory-tip" style="margin-top:12px;"><strong>💡 Resume line:</strong> "Built a Spring Boot application integrating GitHub REST API with PostgreSQL persistence, JPA, derived query duplicate prevention, and global exception handling."</div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
 <div class="footer">
-  // springboot_interview_qa.html — Siddharth's Study Guide — June 2026
+  // springboot_interview_qa.html — Siddharth's Study Guide — Updated June 27, 2026
 </div>
 
 </body>

@@ -29,8 +29,8 @@ public class GitHubLogController {
     }
 
     @GetMapping("/github")
-    public List<CommitModel> gitLogs(@RequestBody DevDTO dev) {
-        String devProfile = dev.getDevProfile();
+    public List<CommitModel> gitLogs(@RequestParam String devProfile) {
+//        String devProfile = dev.getDevProfile();
         return gitHubLogService.getCommits(devProfile);
     }
 
@@ -44,5 +44,4 @@ public class GitHubLogController {
         return gitHubLogService.getCommitsFromDB();
     }
 
-    public ResponseEntity<ErrorResponse> hande(GitHubAPIException ex){}
 }
