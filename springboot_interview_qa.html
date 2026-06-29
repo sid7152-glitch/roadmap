@@ -341,6 +341,9 @@
       <a href="#s6"><span class="toc-num">06</span> Java 8 Features</a>
       <a href="#s7"><span class="toc-num">07</span> Microservices</a>
       <a href="#s8"><span class="toc-num">08</span> Bean Lifecycle</a>
+      <a href="#s9"><span class="toc-num">09</span> Project Status</a>
+      <a href="#s10"><span class="toc-num">10</span> Career Roadmap</a>
+      <a href="#s11"><span class="toc-num">11</span> Scheduler</a>
     </div>
   </div>
 
@@ -982,8 +985,137 @@ name.orElse(<span class="str">"Unknown"</span>); <span class="cmt">// returns va
 
   <div class="divider"></div>
 
+  <!-- SECTION 11 — SCHEDULER -->
+  <div class="section" id="s11">
+    <div class="section-title"><span class="num">11</span> Scheduler</div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is @Scheduled and why do we use it?</div>
+      <div class="a">
+        <p><code>@Scheduled</code> tells Spring to run a method automatically at a fixed time interval without any manual trigger.</p>
+        <p>In your project — without scheduler you had to manually hit <code>/api/github?devProfile=sid7152-glitch</code> every time. With scheduler, commits are fetched and saved to DB automatically every hour.</p>
+        <div class="flow">
+          App starts<br>
+          <span class="arrow">↓</span> Scheduler fires immediately (initialDelay = 0)<br>
+          <span class="arrow">↓</span> getCommits("sid7152-glitch") called automatically<br>
+          <span class="arrow">↓</span> GitHub API fetched, new commits saved to DB<br>
+          <span class="arrow">↓</span> Waits 1 hour<br>
+          <span class="arrow">↓</span> Repeats automatically forever
+        </div>
+        <div class="memory-tip"><strong>💡 Remember:</strong> Same concept as IBM MQ monitoring at Accenture — instead of someone manually checking, the system checks itself automatically.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is @EnableScheduling and where does it go?</div>
+      <div class="a">
+        <p>Goes on the main application class. Activates Spring's scheduling engine for the entire application. Without this, all <code>@Scheduled</code> annotations are completely ignored.</p>
+        <pre><span class="ann">@SpringBootApplication</span>
+<span class="ann">@EnableScheduling</span> <span class="cmt">// activates scheduling engine</span>
+<span class="kw">public class</span> GithubLoggerApplication {
+    <span class="kw">public static void</span> main(String[] args) {
+        SpringApplication.run(GithubLoggerApplication.class, args);
+    }
+}</pre>
+        <div class="memory-tip"><strong>💡 Remember:</strong> @EnableScheduling on main class = flipping the master switch. @Scheduled on methods = individual timers. Master switch must be on for timers to work.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What are the different ways to define schedule interval?</div>
+      <div class="a">
+        <table>
+          <tr><th>Option</th><th>Meaning</th><th>Example</th></tr>
+          <tr><td><code>fixedRate</code></td><td>Run every X ms from start of last run</td><td>fixedRate = 3600000 (1 hour)</td></tr>
+          <tr><td><code>fixedDelay</code></td><td>Wait X ms after last run completes</td><td>fixedDelay = 3600000</td></tr>
+          <tr><td><code>initialDelay</code></td><td>Wait X ms before first run</td><td>initialDelay = 0 (fire immediately)</td></tr>
+          <tr><td><code>cron</code></td><td>Run at specific time like cron job</td><td>cron = "0 0 * * * *"</td></tr>
+        </table>
+        <p><strong>Difference between fixedRate and fixedDelay:</strong></p>
+        <div class="flow">
+          <span class="highlight">fixedRate = 1 hour:</span><br>
+          Run 1 starts 10:00 → takes 10 mins → ends 10:10<br>
+          Run 2 starts 11:00 (1 hour from START of Run 1)<br><br>
+          <span class="highlight">fixedDelay = 1 hour:</span><br>
+          Run 1 starts 10:00 → takes 10 mins → ends 10:10<br>
+          Run 2 starts 11:10 (1 hour after END of Run 1)
+        </div>
+        <div class="memory-tip"><strong>💡 In your project:</strong> @Scheduled(fixedRate = 3600000, initialDelay = 0) — fetches every hour, fires immediately on startup.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is @PostConstruct and how is it different from @Scheduled?</div>
+      <div class="a">
+        <p><code>@PostConstruct</code> — runs once after the bean is fully initialized. Used for one-time setup logic.</p>
+        <p><code>@Scheduled</code> — runs repeatedly at a fixed interval.</p>
+        <table>
+          <tr><th></th><th>@PostConstruct</th><th>@Scheduled</th></tr>
+          <tr><td>Runs</td><td>Once on startup</td><td>Repeatedly at interval</td></tr>
+          <tr><td>Purpose</td><td>One-time initialization</td><td>Recurring background task</td></tr>
+          <tr><td>Needs @EnableScheduling</td><td>No</td><td>Yes</td></tr>
+        </table>
+        <pre><span class="ann">@PostConstruct</span>
+<span class="kw">public void</span> init() {
+    <span class="cmt">// runs ONCE after bean created — good for setup</span>
+}
+
+<span class="ann">@Scheduled</span>(fixedRate = 3600000, initialDelay = 0)
+<span class="kw">public void</span> scheduledFetch() {
+    <span class="cmt">// runs EVERY HOUR — good for recurring tasks</span>
+    getCommits(githubUserName);
+}</pre>
+        <div class="memory-tip"><strong>💡 Remember:</strong> You initially had both on same method — that was redundant. @Scheduled with initialDelay=0 already fires on startup. @PostConstruct not needed.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is @Value and how does it work?</div>
+      <div class="a">
+        <p>Injects values from <code>application.properties</code> into class fields at runtime. Avoids hardcoding configuration in Java code.</p>
+        <pre><span class="cmt"># application.properties</span>
+api.url=https://api.github.com/users/enter_user/events
+github.username=sid7152-glitch
+spring.jpa.open-in-view=false</pre>
+        <pre><span class="cmt">// GitHubLogService.java</span>
+<span class="ann">@Value</span>(<span class="str">"${api.url}"</span>)
+<span class="kw">private</span> String baseUrl;
+
+<span class="ann">@Value</span>(<span class="str">"${github.username}"</span>)
+<span class="kw">private</span> String githubUserName;</pre>
+        <p>⚠️ Common mistake — <code>${}</code> not <code>@{}</code>. Using wrong syntax throws error at startup.</p>
+        <div class="memory-tip"><strong>💡 Remember:</strong> You initially wrote @{github.username} instead of ${github.username}. Always $ not @.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> How does the complete Scheduler flow work in your project?</div>
+      <div class="a">
+        <div class="flow">
+          App starts → @EnableScheduling activates scheduling engine<br>
+          <span class="arrow">↓</span><br>
+          @Scheduled(fixedRate=3600000, initialDelay=0) fires immediately<br>
+          <span class="arrow">↓</span><br>
+          scheduledFetch() called → getCommits(githubUserName)<br>
+          <span class="arrow">↓</span><br>
+          GitHub API called → response parsed → commits extracted<br>
+          <span class="arrow">↓</span><br>
+          existsByEventID() filters duplicates<br>
+          <span class="arrow">↓</span><br>
+          <span class="highlight">saveAll() — only new commits saved to DB</span><br>
+          <span class="arrow">↓</span><br>
+          Waits 1 hour → repeats
+        </div>
+        <p>DB result after scheduler ran: 10 records with IDs jumping from 4 to 7 — proving duplicate prevention worked correctly on repeated runs.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
 <div class="footer">
-  // springboot_interview_qa.html — Siddharth's Study Guide — Updated June 27, 2026
+  // springboot_interview_qa.html — Siddharth's Study Guide — Updated June 29, 2026
 </div>
 
 </body>

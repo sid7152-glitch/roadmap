@@ -17,7 +17,6 @@
     margin: 0 auto;
   }
 
-  /* HEADER */
   header {
     text-align: center;
     margin-bottom: 16px;
@@ -31,7 +30,7 @@
   }
 
   header .subtitle {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
     letter-spacing: 1px;
     margin: 4px 0 6px;
@@ -50,10 +49,9 @@
 
   hr.thin {
     border-top: 1px solid #ccc;
-    margin: 10px 0;
+    margin: 8px 0;
   }
 
-  /* SECTION */
   .section { margin-bottom: 14px; }
 
   .section-title {
@@ -64,14 +62,12 @@
     margin-bottom: 6px;
   }
 
-  /* SUMMARY */
   .summary p {
     font-size: 12.5px;
     line-height: 1.6;
     text-align: justify;
   }
 
-  /* EXPERIENCE ENTRY */
   .exp-entry { margin-bottom: 10px; }
 
   .exp-header {
@@ -91,6 +87,14 @@
     white-space: nowrap;
   }
 
+  .exp-tags {
+    font-size: 11.5px;
+    color: #444;
+    font-style: italic;
+    margin-top: 2px;
+    margin-bottom: 2px;
+  }
+
   ul {
     padding-left: 18px;
     margin-top: 4px;
@@ -102,23 +106,20 @@
     margin-bottom: 2px;
   }
 
-  /* SKILLS */
   .skill-row {
     font-size: 12.5px;
-    line-height: 1.6;
-    margin-bottom: 2px;
+    line-height: 1.7;
+    margin-bottom: 1px;
   }
 
-  .skill-row strong {
-    font-weight: 700;
-  }
+  .skill-row strong { font-weight: 700; }
 
-  /* EDUCATION */
   .edu-degree { font-weight: 700; font-size: 13px; }
-  .edu-school { font-size: 12.5px; }
+  .edu-school { font-size: 12.5px; margin-bottom: 4px; }
 
   @media print {
     body { padding: 24px 40px; }
+    .section { page-break-inside: avoid; }
   }
 </style>
 </head>
@@ -126,7 +127,7 @@
 
   <header>
     <h1>Siddharth Kannan</h1>
-    <p class="subtitle">Senior Software Developer</p>
+    <p class="subtitle">Java Backend Developer</p>
     <p class="contact">Bangalore, India &bull; +91 78713 33119 &bull; sid7152@outlook.com</p>
   </header>
 
@@ -137,7 +138,7 @@
     <div class="section-title">Summary</div>
     <hr class="thin">
     <div class="summary">
-      <p>Java Backend Developer with 4 years of experience building secure and scalable services in the Banking domain. Strong in RESTful API development, authentication workflows, session management, audit logging, and integrating Java services with frontend modules. Currently expanding expertise in Spring Boot, Spring Data JPA, Hibernate, repository design, and relational database modeling.</p>
+      <p>Java Backend Developer with 4+ years of experience building secure and scalable services in the Banking and Finance domain. Strong in RESTful API development, Spring Boot, Spring Data JPA, Hibernate, authentication workflows, session management, and audit logging. Currently building a Spring Boot application integrating GitHub REST API with PostgreSQL persistence, JPA relationships, scheduled jobs, and global exception handling. Actively expanding into cloud-native development, Microservices, and Docker.</p>
     </div>
   </div>
 
@@ -146,26 +147,28 @@
     <div class="section-title">Work Experience</div>
     <hr class="thin">
 
- <div class="exp-entry">
+    <div class="exp-entry">
       <div class="exp-header">
         <span class="exp-role">Senior Software Analyst, Accenture</span>
-        <span class="exp-date">March 2026 - Present</span>
+        <span class="exp-date">March 2026 – Present</span>
       </div>
       <ul>
-        <li>Handling production issues as a Enterprise Integration Developer.</li>
-        <li>Ensuring timely message delivery to stores via message queue</li>
-        <li>Handling tasks via Airflow to validate jobs completed as per schedule</li>
+        <li>Handling production support as an Enterprise Integration Developer in a large-scale retail banking environment.</li>
+        <li>Monitoring and ensuring timely message delivery to stores via IBM MQ message queuing system.</li>
+        <li>Managing and validating scheduled Airflow jobs to ensure data pipeline completion and integrity.</li>
+        <li>Performing pod log analysis on Google Cloud Platform to identify and resolve integration failures.</li>
+        <li>Supporting IBM Cloud to Kubernetes migration by validating API gateway flows via APIGEE.</li>
       </ul>
     </div>
 
     <div class="exp-entry">
       <div class="exp-header">
         <span class="exp-role">Senior Software Developer, Aspire Systems</span>
-        <span class="exp-date">Jun 2025 - March 2026</span>
+        <span class="exp-date">Jun 2025 – March 2026</span>
       </div>
       <ul>
-        <li>Designed and developed secure backend modules in Java, covering user validation, verification, and single-device session management with complete audit and logging mechanisms.</li>
-        <li>Integrated Kony.js frontend with Java REST services, implementing reusable session components and user action loggers to enhance performance and data consistency across modules.</li>
+        <li>Designed and developed secure backend modules in Java covering user validation, verification, and single-device session management with complete audit and logging mechanisms.</li>
+        <li>Integrated Kony.js frontend with Java REST services, implementing reusable session components and user action loggers to enhance performance and data consistency.</li>
         <li>Promoted for technical ownership and delivery excellence, consistently building scalable, maintainable, and client-appreciated backend solutions.</li>
       </ul>
     </div>
@@ -173,40 +176,61 @@
     <div class="exp-entry">
       <div class="exp-header">
         <span class="exp-role">Software Developer, Aspire Systems</span>
-        <span class="exp-date">Mar 2023 - Jun 2025</span>
+        <span class="exp-date">Mar 2023 – Jun 2025</span>
       </div>
       <ul>
-        <li>Authored Functional Specification Documents (FSDs) with clear module flows tailored for both developers and client stakeholders.</li>
         <li>Led backend development of the Login Module using Java, implementing secure User Validation and Verification workflows to distinguish between clients and customers.</li>
         <li>Developed Session Management services to ensure single active session per user, enhancing security and preventing concurrent logins.</li>
-        <li>Built a frontend-integrated session management mechanism in Kony.js to capture and persist essential user data, enabling cross-module reuse by other developers.</li>
         <li>Implemented API Logging framework to record every API invocation, storing metadata such as timestamps, endpoints, and response status in a centralized database table.</li>
-        <li>Designed and integrated User Action Logging on both frontend (Kony.js) and backend (Java) to track user interactions for audit and analytics purposes.</li>
-        <li>Collaborated closely with frontend developers to ensure seamless integration between Java backend services and Kony.js UI modules.</li>
+        <li>Designed and integrated User Action Logging on both frontend and backend to track user interactions for audit and analytics purposes.</li>
+        <li>Authored Functional Specification Documents (FSDs) with clear module flows tailored for both developers and client stakeholders.</li>
         <li>Delivered secure, maintainable, and performance-optimized backend components with zero post-deployment issues.</li>
       </ul>
     </div>
 
     <div class="exp-entry">
       <div class="exp-header">
-        <span class="exp-role">BFS - Trainee, Aspire Systems</span>
-        <span class="exp-date">Jun 2022 - Mar 2023</span>
+        <span class="exp-role">BFS Trainee, Aspire Systems</span>
+        <span class="exp-date">Jun 2022 – Mar 2023</span>
       </div>
       <ul>
-        <li>Completed structured training on Kony.js, JAVA and Temenos Infinity development.</li>
-        <li>Gained hands-on exposure to Temenos Banking Products, focusing on omnichannel architecture and digital banking workflows.</li>
-        <li>Learned fundamentals of mobile and web application development using Kony Visualizer and Fabric.</li>
+        <li>Completed structured training on Java, Kony.js, and Temenos Infinity development.</li>
+        <li>Gained hands-on exposure to Temenos Banking Products focusing on omnichannel architecture and digital banking workflows.</li>
         <li>Built a strong foundation that supported transition into real-time project delivery.</li>
       </ul>
     </div>
+
     <div class="exp-entry">
       <div class="exp-header">
         <span class="exp-role">Software Engineer Intern, Swarashiya Solutions</span>
-        <span class="exp-date">Nov 2020 - Feb 2021</span>
+        <span class="exp-date">Nov 2020 – Feb 2021</span>
       </div>
       <ul>
         <li>Contributed to UI development for a job-seeking mobile application built with Flutter.</li>
         <li>Gained foundational understanding of cross-platform mobile development.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PROJECTS -->
+  <div class="section">
+    <div class="section-title">Projects</div>
+    <hr class="thin">
+
+    <div class="exp-entry">
+      <div class="exp-header">
+        <span class="exp-role">GitHub Activity Logger</span>
+        <span class="exp-date">2026 – Present</span>
+      </div>
+      <p class="exp-tags">Spring Boot &bull; PostgreSQL &bull; REST API &bull; Spring Data JPA &bull; Hibernate &bull; Scheduler</p>
+      <ul>
+        <li>Built a Spring Boot application that integrates with GitHub REST API to fetch and persist repository commit activity.</li>
+        <li>Implemented pure Java HTTP client for API calls and regex-based JSON parsing without external libraries.</li>
+        <li>Designed a normalized PostgreSQL schema with User, Repository, and CommitRecords tables with JPA entity mapping.</li>
+        <li>Implemented duplicate prevention using Spring Data JPA derived query method <code>existsByEventID()</code> to avoid redundant inserts.</li>
+        <li>Built a scheduled job using <code>@Scheduled</code> to auto-fetch new commits every hour without manual trigger.</li>
+        <li>Developed global exception handling architecture with custom <code>GitHubAPIException</code>, <code>ErrorResponse</code> DTO, and <code>@RestControllerAdvice</code>.</li>
+        <li>Exposed clean REST endpoints with <code>@RequestParam</code>-based GET APIs and proper HTTP status codes via <code>ResponseEntity</code>.</li>
       </ul>
     </div>
   </div>
@@ -216,17 +240,14 @@
     <div class="section-title">Technical Skills</div>
     <hr class="thin">
     <ul>
-      <li class="skill-row"><strong>Java</strong> - Worked extensively with Temenos Fabric (preprocessor/postprocessor) for backend logic, JSON, Debugging, Exception Handling</li>
-      <li class="skill-row"><strong>Spring Boot, Spring Data JPA, Hibernate</strong> – Building REST APIs, defining entities, repositories, validating domain models, designing relational schemas, Microservices</li>
-      <li class="skill-row"><strong>SQL</strong> - Used in backend integrations within Temenos Fabric for database operations</li>
-      <li class="skill-row"><strong>Kony.js / Temenos Visualizer</strong> - Experience building cross-platform mobile/web apps using Temenos tools, Debugging</li>
-      <li class="skill-row"><strong>Azure DevOps</strong> - Proficient in Git operations, PR management, and CI/CD pipelines</li>
-      <li class="skill-row"><strong>JIRA</strong> - Used for assigning tickets, tracking progress via dashboards, and applying filters for issue management</li>
-      <li class="skill-row"><strong>Service Now</strong> - Used for assigning incidents, tracking progress via dashboards, and applying filters for issue management</li>
-      <li class="skill-row"><strong>Generative AI</strong> - Adopted Generative AI-based coding assistance to enhance productivity, accelerate learning, and deliver high-quality solutions</li>
+      <li class="skill-row"><strong>Java</strong> – Core Java, OOP, Collections, Streams, Lambdas, Optional, Exception Handling, Functional Interfaces</li>
+      <li class="skill-row"><strong>Spring Boot</strong> – REST API development, Spring Data JPA, Hibernate, @Scheduled, Global Exception Handling, Bean Lifecycle, IoC/Dependency Injection</li>
+      <li class="skill-row"><strong>Database</strong> – PostgreSQL, SQL, JPA entity mapping, relational schema design, derived query methods</li>
+      <li class="skill-row"><strong>Cloud &amp; DevOps</strong> – Google Cloud Platform (pod log analysis), IBM MQ, APIGEE, Airflow, Azure DevOps, Git, CI/CD</li>
+      <li class="skill-row"><strong>Tools</strong> – IntelliJ IDEA, Postman, pgAdmin, Docker (learning), JIRA, ServiceNow</li>
+      <li class="skill-row"><strong>Domain</strong> – Banking and Finance (BFS): Retail, SME — Login, Investment, Session Management, API Logging, Menu, Bill Payments</li>
+      <li class="skill-row"><strong>Methodologies</strong> – Agile/Scrum, Waterfall hybrid, Sprint planning, Backlog refinement, Daily stand-ups</li>
       <li class="skill-row"><strong>Soft Skills</strong> – Team Management, Communication, Time Management, Problem Solving</li>
-      <li class="skill-row"><strong>Agile/Waterfall Methodologies</strong> - Worked in an Agile-Scrum environment within a hybrid Waterfall framework - involved in sprint planning, backlog refinement, daily stand-ups, and sprint reviews.</li>
-      <li class="skill-row"><strong>Domain Knowledge</strong> - Banking and Finance Service (BFS): Retail, SME. Worked on Login, Investment Module, Profile Module, Menu Module, Bill Payments.</li>
     </ul>
   </div>
 
@@ -237,12 +258,12 @@
     <div class="exp-entry">
       <div class="exp-header">
         <span class="edu-degree">Bachelor of Engineering (B.E) in Mechatronics</span>
-        <span class="exp-date">Aug 2018 - March 2022</span>
+        <span class="exp-date">Aug 2018 – March 2022</span>
       </div>
       <p class="edu-school">Bannari Amman Institute of Technology, Tamil Nadu, India</p>
       <ul>
         <li>Cleared with First Class</li>
-        <li>Developed an Automatic Facial Recognition Door Unlock system as a Final Year Project, integrating image processing</li>
+        <li>Developed an Automatic Facial Recognition Door Unlock system as Final Year Project, integrating image processing</li>
       </ul>
     </div>
   </div>

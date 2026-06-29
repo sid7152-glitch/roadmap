@@ -3,8 +3,10 @@ package com.astrevia.githubLogger.service;
 import com.astrevia.githubLogger.exception.GitHubAPIException;
 import com.astrevia.githubLogger.model.CommitModel;
 import com.astrevia.githubLogger.repository.CommitRepository;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -22,6 +24,9 @@ import java.util.stream.Collectors;
 public class GitHubLogService {
     @Value("${api.url}")
     private String baseUrl;
+
+    @Value("${github.username}")
+    private String githubUserName;
 
     @Autowired
     private CommitRepository commitRepository;
@@ -58,6 +63,11 @@ public class GitHubLogService {
             return matcher.group(1);
         }
         return "NOT_FOUND";
+    }
+
+    @Scheduled(fixedRate = 3600000, initialDelay = 0)
+    public void scheduledFetch(){
+        getCommits(githubUserName);
     }
 
     public List<CommitModel> getCommits(String devProfile) {
