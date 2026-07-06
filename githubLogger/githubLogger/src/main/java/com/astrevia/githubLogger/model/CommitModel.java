@@ -9,7 +9,7 @@ import lombok.*;
 @Getter
 @Setter
 //@AllArgsConstructor
-@ToString
+
 public class CommitModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +32,14 @@ public class CommitModel {
         this.beforeHand = beforeHand;
         this.createdAt = createdAt;
     }
+
+    @ManyToOne //I say many of the commits sit here belongs to some particular users, but I'm sure that one commit belongs to one user.
+    @JoinColumn(name = "user_id") // To mention the foriegn key(in Java the variable name) in the table so it can confirm that this particular commit belongs to that user
+    private CommitUser commitUser;
+
+   @ManyToOne
+   @JoinColumn(name = "repo_id")
+   private Repository commitRepo;
     /*
 
 //    Getter and Setter annotation is already in use

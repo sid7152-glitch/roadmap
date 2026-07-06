@@ -222,11 +222,12 @@
         <span class="exp-role">GitHub Activity Logger</span>
         <span class="exp-date">2026 – Present</span>
       </div>
-      <p class="exp-tags">Spring Boot &bull; PostgreSQL &bull; REST API &bull; Spring Data JPA &bull; Hibernate &bull; Scheduler</p>
+      <p class="exp-tags">Spring Boot &bull; PostgreSQL &bull; REST API &bull; Spring Data JPA &bull; Hibernate &bull; Scheduler &bull; JPA Relationships</p>
       <ul>
         <li>Built a Spring Boot application that integrates with GitHub REST API to fetch and persist repository commit activity.</li>
         <li>Implemented pure Java HTTP client for API calls and regex-based JSON parsing without external libraries.</li>
-        <li>Designed a normalized PostgreSQL schema with User, Repository, and CommitRecords tables with JPA entity mapping.</li>
+        <li>Designed a normalized PostgreSQL schema with User, Repository, and CommitRecords tables — implemented One-to-Many and Many-to-Many JPA relationships between entities.</li>
+        <li>Wired @OneToMany, @ManyToOne and @ManyToMany relationships using @JoinColumn and @JoinTable with proper mappedBy ownership.</li>
         <li>Implemented duplicate prevention using Spring Data JPA derived query method <code>existsByEventID()</code> to avoid redundant inserts.</li>
         <li>Built a scheduled job using <code>@Scheduled</code> to auto-fetch new commits every hour without manual trigger.</li>
         <li>Developed global exception handling architecture with custom <code>GitHubAPIException</code>, <code>ErrorResponse</code> DTO, and <code>@RestControllerAdvice</code>.</li>
@@ -241,8 +242,8 @@
     <hr class="thin">
     <ul>
       <li class="skill-row"><strong>Java</strong> – Core Java, OOP, Collections, Streams, Lambdas, Optional, Exception Handling, Functional Interfaces</li>
-      <li class="skill-row"><strong>Spring Boot</strong> – REST API development, Spring Data JPA, Hibernate, @Scheduled, Global Exception Handling, Bean Lifecycle, IoC/Dependency Injection</li>
-      <li class="skill-row"><strong>Database</strong> – PostgreSQL, SQL, JPA entity mapping, relational schema design, derived query methods</li>
+      <li class="skill-row"><strong>Spring Boot</strong> – REST API development, Spring Data JPA, Hibernate, @Scheduled, Global Exception Handling, Bean Lifecycle, IoC/Dependency Injection, JPA Relationships (One-to-Many, Many-to-Many)</li>
+      <li class="skill-row"><strong>Database</strong> – PostgreSQL, SQL, JPA entity mapping, relational schema design, derived query methods, foreign key relationships</li>
       <li class="skill-row"><strong>Cloud &amp; DevOps</strong> – Google Cloud Platform (pod log analysis), IBM MQ, APIGEE, Airflow, Azure DevOps, Git, CI/CD</li>
       <li class="skill-row"><strong>Tools</strong> – IntelliJ IDEA, Postman, pgAdmin, Docker (learning), JIRA, ServiceNow</li>
       <li class="skill-row"><strong>Domain</strong> – Banking and Finance (BFS): Retail, SME — Login, Investment, Session Management, API Logging, Menu, Bill Payments</li>

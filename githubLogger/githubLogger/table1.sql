@@ -27,3 +27,8 @@ CREATE TABLE user_repository (
     repo_id     BIGINT,
     PRIMARY KEY (user_id, repo_id)
 );
+
+-- Altering the table to add the user_id which refers to the id coloum in the 
+-- commit_user table "id" column
+ALTER TABLE commit_records 
+ADD COLUMN user_id BIGINT REFERENCES commit_user(id);

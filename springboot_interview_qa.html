@@ -344,6 +344,7 @@
       <a href="#s9"><span class="toc-num">09</span> Project Status</a>
       <a href="#s10"><span class="toc-num">10</span> Career Roadmap</a>
       <a href="#s11"><span class="toc-num">11</span> Scheduler</a>
+      <a href="#s12"><span class="toc-num">12</span> JPA Relationships</a>
     </div>
   </div>
 
@@ -1114,8 +1115,145 @@ spring.jpa.open-in-view=false</pre>
 
   <div class="divider"></div>
 
+  <!-- SECTION 12 — JPA RELATIONSHIPS -->
+  <div class="section" id="s12">
+    <div class="section-title"><span class="num">12</span> JPA Relationships</div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What are JPA Relationships and why do we need them?</div>
+      <div class="a">
+        <p>JPA Relationships define how tables connect to each other in Java code. Without them, tables are isolated — no connection between who made a commit or which repo it belongs to.</p>
+        <p>In your project — three tables needed to be connected:</p>
+        <div class="flow">
+          commit_user <span class="arrow">──────────────</span> commit_records<br>
+          (One to Many — one user, many commits)<br><br>
+          repository <span class="arrow">───────────────</span> commit_records<br>
+          (One to Many — one repo, many commits)<br><br>
+          commit_user <span class="arrow">──────────────</span> repository<br>
+          (Many to Many — one user many repos, one repo many users)
+        </div>
+        <div class="memory-tip"><strong>💡 Remember:</strong> Without relationships, tables are just isolated spreadsheets. Relationships make them a connected database.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is One to Many and Many to One?</div>
+      <div class="a">
+        <p>Two sides of the same relationship. One user has many commits. Many commits belong to one user.</p>
+        <p><strong>One side (CommitUser) — @OneToMany:</strong></p>
+        <pre><span class="ann">@OneToMany</span>(mappedBy = <span class="str">"commitUser"</span>)
+List&lt;CommitModel&gt; commits = <span class="kw">new</span> ArrayList&lt;&gt;();</pre>
+        <p><strong>Many side (CommitModel) — @ManyToOne:</strong></p>
+        <pre><span class="ann">@ManyToOne</span>
+<span class="ann">@JoinColumn</span>(name = <span class="str">"user_id"</span>) <span class="cmt">// FK in commit_records table</span>
+<span class="kw">private</span> CommitUser commitUser;</pre>
+        <div class="memory-tip"><strong>💡 Remember:</strong> @ManyToOne side always has @JoinColumn — it owns the FK. @OneToMany side always has mappedBy — it says "other side handles it."</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is mappedBy and why is it needed?</div>
+      <div class="a">
+        <p>Without <code>mappedBy</code> — JPA thinks both sides are managing the relationship independently and creates duplicate FK columns or extra join tables.</p>
+        <p><code>mappedBy</code> tells JPA — "I'm not managing this relationship, the other side is. Go look at the field named X in that class."</p>
+        <pre><span class="cmt">// CommitUser says — commitUser field in CommitModel manages this</span>
+<span class="ann">@OneToMany</span>(mappedBy = <span class="str">"commitUser"</span>)
+List&lt;CommitModel&gt; commits = <span class="kw">new</span> ArrayList&lt;&gt;();</pre>
+        <table>
+          <tr><th>Without mappedBy</th><th>With mappedBy</th></tr>
+          <tr><td>Two FKs or extra table created</td><td>One FK, clean DB</td></tr>
+          <tr><td>Duplicate relationship</td><td>Single managed relationship</td></tr>
+          <tr><td>Wrong data or runtime error</td><td>Correct data always</td></tr>
+        </table>
+        <div class="memory-tip"><strong>💡 Rule:</strong> @OneToMany always has mappedBy. @ManyToOne always has @JoinColumn. Never both without mappedBy.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is @JoinColumn?</div>
+      <div class="a">
+        <p>Tells JPA which column in the current table is the foreign key linking to the other table.</p>
+        <pre><span class="ann">@ManyToOne</span>
+<span class="ann">@JoinColumn</span>(name = <span class="str">"user_id"</span>)
+<span class="kw">private</span> CommitUser commitUser;</pre>
+        <p>This tells JPA — "the <code>user_id</code> column in <code>commit_records</code> is the FK pointing to <code>commit_user</code> table."</p>
+        <div class="memory-tip"><strong>💡 Difference:</strong> @Column maps a regular field. @JoinColumn maps a relationship via a foreign key column.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is Many to Many and how is it different from One to Many?</div>
+      <div class="a">
+        <p>Many to Many is when BOTH directions have "many":</p>
+        <p>One user → many repos ✅ AND one repo → many users ✅</p>
+        <p>You can't store this in two tables — you need a middle table.</p>
+        <div class="flow">
+          commit_user    user_repository    repository<br>
+          -----------    ---------------    ----------<br>
+          id: 1      <span class="arrow">→</span>  user_id: 1    <span class="arrow">←</span>  id: 1<br>
+                         repo_id: 1
+        </div>
+        <div class="memory-tip"><strong>💡 How to identify Many to Many:</strong> Ask two questions — Can A have many B? Can B have many A? If both YES → Many to Many.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is @JoinTable and how does it work?</div>
+      <div class="a">
+        <p>Used for Many to Many. Points to the middle table where the foreign keys of both sides live.</p>
+        <pre><span class="ann">@ManyToMany</span>
+<span class="ann">@JoinTable</span>(
+    name = <span class="str">"user_repository"</span>,          <span class="cmt">// middle table name</span>
+    joinColumns = <span class="ann">@JoinColumn</span>(name = <span class="str">"user_id"</span>),        <span class="cmt">// MY FK in middle table</span>
+    inverseJoinColumns = <span class="ann">@JoinColumn</span>(name = <span class="str">"repo_id"</span>)  <span class="cmt">// OTHER side FK</span>
+)
+List&lt;Repository&gt; repositories = <span class="kw">new</span> ArrayList&lt;&gt;();</pre>
+        <table>
+          <tr><th>Parameter</th><th>Meaning</th></tr>
+          <tr><td>name</td><td>Middle table name</td></tr>
+          <tr><td>joinColumns</td><td>FK for current class (ME)</td></tr>
+          <tr><td>inverseJoinColumns</td><td>FK for other class (OTHER SIDE)</td></tr>
+        </table>
+        <div class="memory-tip"><strong>💡 Husband/Wife analogy:</strong> Husband (@JoinTable) manages the relationship. Wife (mappedBy) just points to husband. Middle table = marriage certificate holding both their IDs. 😄</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> Where do foreign keys live in each relationship type?</div>
+      <div class="a">
+        <table>
+          <tr><th>Relationship</th><th>FK lives in</th><th>Annotation</th></tr>
+          <tr><td>One to Many</td><td>Many side table (CommitModel)</td><td>@JoinColumn</td></tr>
+          <tr><td>Many to One</td><td>Current table (CommitModel)</td><td>@JoinColumn</td></tr>
+          <tr><td>Many to Many</td><td>Middle table (user_repository)</td><td>@JoinTable</td></tr>
+        </table>
+        <div class="memory-tip"><strong>💡 Remember:</strong> You added user_id and repo_id columns to commit_records via ALTER TABLE. For Many to Many — user_repository middle table already existed from initial schema design.</div>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="q"><span class="q-icon">Q</span> What is the correct order to implement relationships?</div>
+      <div class="a">
+        <p>Always start from the <strong>Many side</strong> first — because <code>mappedBy</code> on the One side needs to reference a field that already exists.</p>
+        <div class="flow">
+          <span class="highlight">Step 1</span> — Add @ManyToOne + @JoinColumn in CommitModel (Many side)<br>
+          <span class="arrow">↓</span><br>
+          <span class="highlight">Step 2</span> — Add @OneToMany(mappedBy = "fieldName") in CommitUser (One side)<br>
+          <span class="arrow">↓</span><br>
+          <span class="highlight">Step 3</span> — ALTER TABLE to add FK column in DB<br>
+          <span class="arrow">↓</span><br>
+          <span class="highlight">Step 4</span> — Run and verify clean startup
+        </div>
+        <div class="memory-tip"><strong>💡 Remember:</strong> You initially did CommitUser first — then realized mappedBy had nothing to point to. Many side always comes first.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
 <div class="footer">
-  // springboot_interview_qa.html — Siddharth's Study Guide — Updated June 29, 2026
+  // springboot_interview_qa.html — Siddharth's Study Guide — Updated July 06, 2026
 </div>
 
 </body>
