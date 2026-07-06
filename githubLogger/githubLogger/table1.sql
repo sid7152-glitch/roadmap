@@ -32,3 +32,17 @@ CREATE TABLE user_repository (
 -- commit_user table "id" column
 ALTER TABLE commit_records 
 ADD COLUMN user_id BIGINT REFERENCES commit_user(id);
+
+
+ALTER TABLE commit_records 
+ADD COLUMN repo_id BIGINT REFERENCES repository(id);
+
+-- Defining relationship with commit_user and repository table 
+-- User repository table holds both the foriegn keys
+ALTER TABLE user_repository
+ADD CONSTRAINT fk_user
+FOREIGN KEY (user_id) REFERENCES commit_user(id);
+
+ALTER TABLE user_repository
+ADD CONSTRAINT fk_repo
+FOREIGN KEY (repo_id) REFERENCES repository(id);
