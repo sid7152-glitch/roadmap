@@ -3,6 +3,8 @@ package com.astrevia.githubLogger.service;
 import com.astrevia.githubLogger.exception.GitHubAPIException;
 import com.astrevia.githubLogger.model.CommitModel;
 import com.astrevia.githubLogger.repository.CommitRepository;
+import com.astrevia.githubLogger.repository.CommitUserRepository;
+import com.astrevia.githubLogger.repository.RepoRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +33,13 @@ public class GitHubLogService {
     @Autowired
     private CommitRepository commitRepository;
 
-    public static List<CommitModel> extractCommitRecords(String json) {
+    @Autowired
+    private RepoRepository repoRepository;
+
+    @Autowired
+    private CommitUserRepository commitUserRepository;
+
+    public List<CommitModel> extractCommitRecords(String json) {
 
         // Split each event object
         String[] events = json.split("\\},\\{");
